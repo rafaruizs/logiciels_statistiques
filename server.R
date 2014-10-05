@@ -3,18 +3,6 @@
 
 library(shiny)
 
-loadUserDataset <- function(inFile = NULL) {
-  
-  if (is.null(inFile)) {
-    return()
-  }
-  
-  data <- read.table(inFile$datapath, sep=",", header=T)
-  
-  return(data)
-  
-}
-
 getColumnList <- function(data) {
   
   if (is.null(data)) {
@@ -27,18 +15,23 @@ getColumnList <- function(data) {
 
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output) {  
   
-  data <- as.data.frame(1234)
-  
+  Data <- reactive({
+    
+    inFile <- input$file1
+    if (is.null(inFile)) {
+      return(NULL)
+    }
+    
+    dataset <- read.table(inFile$datapath, sep=",", header=T)
+    return(dataset)
+    
+  })
 
   output$columns <- renderUI({
     
-    inFile <- input$file1
-    
-    data <- loadUserDataset(inFile)
-    
-    column_list <- getColumnList(data)
+    column_list <- getColumnList(Data())
     
     if (!is.null(column_list)) {
       checkboxGroupInput('columns', 'Colonnes', column_list)
@@ -50,7 +43,8 @@ shinyServer(function(input, output) {
   
   output$contents <- renderTable({
     
-    ifelse(!is.null(data), return(data), return())
+    if (is.null(Data())) return(NULL)
+    data.frame(Data())
     
   })
   
