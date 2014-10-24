@@ -75,21 +75,20 @@ shinyServer(function(input, output) {
   
   output$contents <- renderPlot({
     
-    var <- input$columns 
-    
+    var <- input$columns
     
     if(is.null(var)) return(NULL)
     
-    dt <- Data()
-    col <- names(Colonnes())[var]
+    var <- as.numeric(var)
     
-    ds <- dt[[col]]
+    dt <- Data()
+    ds <- dt[[var]]
     
     maxy <- max(ds)
     chunk <- (maxy-min(ds))/4
     breaks <- c(0, min(ds)+chunk, min(ds)+2*chunk, min(ds)+3*chunk, maxy)
     
-    plotvar <- unlist(dt[[col]])
+    plotvar <- unlist(dt[[var]])
     nclr <- 9
     plotclr <- brewer.pal(nclr, "Reds")
     fillRed <- colorRampPalette(plotclr)
