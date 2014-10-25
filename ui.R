@@ -1,4 +1,8 @@
 
+reactiveBar <- function (outputId)
+{
+  HTML(paste("<div id=\"", outputId, "\" class=\"montreal-map-output\"></div>", sep=""))
+}
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -23,8 +27,11 @@ shinyUI(fluidPage(
     
     # Show a plot of the generated distribution
     mainPanel(
+      includeHTML("style.css"),
+      includeHTML("script.js"),
       textOutput("message"),
-      plotOutput("contents")
+      reactiveBar(outputId = "mtlplot")
+      # plotOutput("contents")
     )
   )
 ))

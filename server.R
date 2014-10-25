@@ -23,6 +23,22 @@ getColumnList <- function(data) {
   
 }
 
+# makeColorPalette <- function(ds) {
+#   
+#   maxy <- max(ds)
+#   chunk <- (maxy-min(ds))/4
+#   breaks <- c(0, min(ds)+chunk, min(ds)+2*chunk, min(ds)+3*chunk, maxy)
+#   
+#   plotvar <- unlist(dt[[var]])
+#   nclr <- 9
+#   plotclr <- brewer.pal(nclr, "Reds")
+#   fillRed <- colorRampPalette(plotclr)
+#   plotvar[plotvar >= maxy] <- maxy -1
+#   colcode <- fillRed(maxy)[round(plotvar) + 1]
+#   
+#   return(colcode)
+# }
+
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {  
@@ -60,7 +76,8 @@ shinyServer(function(input, output) {
         i <- i + 1
       }
       names(column_with_types) <- as.list(name_list)
-      checkboxGroupInput('columns', 'Colonnes', column_with_types)
+      #checkboxGroupInput('columns', 'Colonnes', column_with_types)
+      checkboxGroupInput('columns', 'Colonnes', names(column_list))
     }
     else {
       return()
@@ -73,30 +90,37 @@ shinyServer(function(input, output) {
     
   })
   
-  output$contents <- renderPlot({
+  output$mtlplot <- reactive({ 
     
-    var <- input$columns
+    c(Data(),'cols'=input$columns, 'colAgglo'=input$colAgglo);
     
-    if(is.null(var)) return(NULL)
-    
-    var <- as.numeric(var)
-    
-    dt <- Data()
-    ds <- dt[[var]]
-    
-    maxy <- max(ds)
-    chunk <- (maxy-min(ds))/4
-    breaks <- c(0, min(ds)+chunk, min(ds)+2*chunk, min(ds)+3*chunk, maxy)
-    
-    plotvar <- unlist(dt[[var]])
-    nclr <- 9
-    plotclr <- brewer.pal(nclr, "Reds")
-    fillRed <- colorRampPalette(plotclr)
-    plotvar[plotvar >= maxy] <- maxy -1
-    colcode <- fillRed(maxy)[round(plotvar) + 1]
-    plot(map, col = colcode, border="dark grey", axes=F, las=1)
-    
-  })
+  });
+  
+#   output$contents <- renderPlot({
+#     
+#     var <- input$columns
+#     
+#     if(is.null(var)) return(NULL)
+#     
+#     var <- as.numeric(var)
+#     
+#     dt <- Data()
+#     ds <- dt[[var]]
+#     
+#     maxy <- max(ds)
+#     chunk <- (maxy-min(ds))/4
+#     breaks <- c(0, min(ds)+chunk, min(ds)+2*chunk, min(ds)+3*chunk, maxy)
+#     
+#     plotvar <- unlist(dt[[var]])
+#     nclr <- 9
+#     plotclr <- brewer.pal(nclr, "Reds")
+#     fillRed <- colorRampPalette(plotclr)
+#     plotvar[plotvar >= maxy] <- maxy -1
+#     colcode <- fillRed(maxy)[round(plotvar) + 1]
+#     plot(map, col = colcode, border="dark grey", axes=F, las=1)
+#     
+#   })
+  
   
   #output$contents <- renderTable({
     
